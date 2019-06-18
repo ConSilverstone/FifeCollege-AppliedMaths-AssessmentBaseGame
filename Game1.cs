@@ -260,7 +260,7 @@ namespace Assessment
                     // so that I can run in the other direction
                     doorSequenceTimer = doorSequenceFinalTime;
                 }
-                newPos = QuadEaseOut((float)doorSequenceTimer, (float)doorSequenceFinalTime, doorStartPoint, doorEndPoint);
+                newPos = CubicEaseOut((float)doorSequenceTimer, (float)doorSequenceFinalTime, doorStartPoint, doorEndPoint);
                     door.SetUpVertices(newPos);
             }
 
@@ -319,9 +319,32 @@ namespace Assessment
         ////////////////////////////////////////////
         // CODE FOR TASK 6 SHOULD BE ENTERED HERE //
         ////////////////////////////////////////////
+        
+        // For the door movement we need to build an easing function
+        private Vector3 CubicEaseOut(float time, float duration, Vector3 startPoint, Vector3 endPoint)
+        {
+            // We need to calculate the independant variable time as a proportion of the time passed to the total duration
+            float t = time / duration;
+
+            // Calculate the position akaa distance traveled from start
+            // Using a derived cubic equation
+            // Producing a fraction of total distance which will be our scaling factor
+            float p = -2f * t * t * t + 3f * t * t;
+
+            // Determine total distance 
+            Vector3 totalDistance = endPoint - startPoint;
+
+            // Determine duration traveled by scaling total distance to scale factor (p)
+            Vector3 distanceTraveled = totalDistance * p;
+
+            // Determine new pos by adding distance traveled to start point
+            Vector3 newPosition = startPoint + distanceTraveled;
+
+            return newPosition;
+        }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        // I decided not to use CubicInterpolation, instead used QuadEaseOut at the bottom of game1.cs //
+        // I decided not to use CubicInterpolation, instead used CubicEaseOut at the bottom of game1.cs //
         /////////////////////////////////////////////////////////////////////////////////////////////////
         public Vector3 CubicInterpolation(Vector3 initialPos, Vector3 endPos, float
         time)
@@ -363,29 +386,6 @@ namespace Assessment
             : Color.CornflowerBlue);
 
             base.Draw(gameTime);
-        }
-
-        // For the door movement we need to build an easing function
-        private Vector3 QuadEaseOut(float time, float duration, Vector3 startPoint, Vector3 endPoint)
-        {
-            // We need to calculate the independant variable time as a proportion of the time passed to the total duration
-            float t = time / duration;
-
-            // Calculate the position akaa distance traveled from start
-            // Using a derived quadratic equation
-            // Producing a fraction of total distance which will be our scaling factor
-            float p = -1f * t * t + 2f * t;
-
-            // Determine total distance 
-            Vector3 totalDistance = endPoint - startPoint;
-
-            // Determine duration traveled by scaling total distance to scale factor (p)
-            Vector3 distanceTraveled = totalDistance * p;
-
-            // Determine new pos by adding distance traveled to start point
-            Vector3 newPosition = startPoint + distanceTraveled;
-
-            return newPosition;
         }
     }
 }
